@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using TaskHandler;
 using Xunit;
 
@@ -10,15 +9,22 @@ namespace Tests
         [Fact]
         public void TestForTaskHandler()
         {
-            var handler = TaskSequHandler.GetInstance();
+            var handler = TaskHandlerSequentally.GetInstance();
 
-            handler.AddForExecution(() => Console.WriteLine("Test1"));
-            handler.AddForExecution(() => {
-                Thread.Sleep(2000);
-                Console.WriteLine("Test2");
-            });
-            handler.AddForExecution(() => Console.WriteLine("Test3"));
+            int count = 0;
+
+            handler.AddForExecution(() => count++);
+            handler.AddForExecution(() => count++);
+
+            Thread.Sleep(1000);
+            Assert.Equal(2, count);
+
+            handler.AddForExecution(() => count++);
+            handler.AddForExecution(() => count++);
+
+            Thread.Sleep(1000);
+            Assert.Equal(4, count);
         }
-       
+
     }
 }
